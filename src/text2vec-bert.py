@@ -87,7 +87,7 @@ def main():
 
     output = vectorize(input_ids, attention_masks, model)
 
-    return jsonify(output)
+    return jsonify({query: vector for query, vector in zip(queries, output)})
 
 if __name__ == "__main__":
     app.run(debug=True)
