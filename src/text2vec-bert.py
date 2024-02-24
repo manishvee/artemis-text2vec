@@ -1,6 +1,6 @@
 import torch
 from transformers import BertTokenizerFast, BertModel
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import os
 
@@ -74,12 +74,10 @@ def vectorize(input_ids, attention_masks, model):
 
     return output
 
-@app.route("/")
+@app.route("/", methods=['POST'])
 @cross_origin()
 def main():
-    if not request.args:
-        return "Provided invalid arguments"
-    queries = request.args.getlist('query')
+    queries = request.get_json(force=True)['data']
     
     tokenizer = load_tokenizer(TOKENIZER_PATH)
     
@@ -89,7 +87,7 @@ def main():
 
     output = vectorize(input_ids, attention_masks, model)
 
-    return output
+    return jsonify(output)
 
 if __name__ == "__main__":
     app.run(debug=True)
